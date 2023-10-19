@@ -11,6 +11,7 @@ public class Score : MonoBehaviour
 
     public int s_line;
     public bool s_rotate;
+    public bool s_pclear;
     
     public bool b2b { get; private set; }
     public int com { get; private set; } = -1;
@@ -29,6 +30,16 @@ public class Score : MonoBehaviour
 
     public void Set()
     {
+        if (s_pclear)
+        {
+            a_score = 10;
+            b2b = false;
+            s_score += a_score * 10;
+            Debug.Log($"{a_score} {b2b} dmg");
+            a_score = 0;
+            return;
+        }
+        
         if (piece.data.tetromino == Tetromino.T && s_rotate)
         {
             if (cnt >= 3)
@@ -150,7 +161,6 @@ public class Score : MonoBehaviour
         {
             cnt++;
         }
-
-        Debug.Log(cnt);
+        
     }
 }

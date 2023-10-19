@@ -140,6 +140,11 @@ public class Piece : MonoBehaviour
         }
         board.Set(this);
         board.ClearLines();
+
+        if (board.tilemap.GetTilesRangeCount(new Vector3Int(-5,-10,0), new Vector3Int(5,12,0)) == 0)
+        {
+            score.s_pclear = true;
+        }
         
         holdcnt = false;
         

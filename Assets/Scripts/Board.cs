@@ -14,8 +14,8 @@ public class Board : MonoBehaviour
     public Vector3Int spawnPosition;
     public Vector3Int spawnPositionadd;
     public Vector2Int boardSize = new(10, 20);
-    public List<int> sevenBag = new();
-    public List<int> Bag = new();
+    public List<int> sevenBag { get; } = new();
+    public List<int> Bag { get; } = new();
     
     public RectInt Bounds
     {
@@ -50,17 +50,16 @@ public class Board : MonoBehaviour
         if (!Isholded && !holdcnt)
         {
             data = tetrominos[Bag[0]];
+            Bag.RemoveAt(0);
         }
         else
         {
             data = hold.tetrominobefore;
         }
-        Bag.RemoveAt(0);
 
         activePiece.Initialize(this, spawnPosition, data);
-        
-        next.Set(Bag);
-        
+            next.Set(Bag);
+
         for (var i = 0; i < 3; i++)
         {
             
