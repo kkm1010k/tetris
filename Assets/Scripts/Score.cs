@@ -12,15 +12,29 @@ public class Score : MonoBehaviour
     public int s_line;
     public bool s_rotate;
     public bool s_pclear;
-    
-    public bool b2b { get; private set; }
-    public int com { get; private set; } = -1;
 
-    public int s_score { get; private set; }
-    public int a_score { get; private set; }
+    public bool b2b;
+    public int com = -1;
+
+    public int s_score;
+    public int a_score;
 
     private int cnt;
 
+    public void GameOver()
+    { 
+        s_line = 0;
+        s_rotate = false;
+        s_pclear = false;
+
+        b2b = false;
+        com = -1;
+
+        s_score = 0; 
+        a_score = 0;
+
+    }
+    
     private void Update()
     {
         line.text = $"{s_line}";
@@ -138,7 +152,7 @@ public class Score : MonoBehaviour
         }
         
         s_score += a_score * 10;
-        Debug.Log($"{a_score} {b2b} dmg");
+        //Debug.Log($"{a_score} {b2b} dmg");
         a_score = 0;
     }
 

@@ -216,10 +216,10 @@ public class Piece : MonoBehaviour
                 case Tetromino.O:
                     cell.x -= 0.5f;
                     cell.y -= 0.5f;
-                    x = Mathf.CeilToInt((cell.x *Data.RotationMatrix[0] * direction) +
+                    x = Mathf.CeilToInt((cell.x * Data.RotationMatrix[0] * direction) +
                                         (cell.y * Data.RotationMatrix[1] * direction));
                     
-                    y = Mathf.CeilToInt((cell.x *Data.RotationMatrix[2] * direction) +
+                    y = Mathf.CeilToInt((cell.x * Data.RotationMatrix[2] * direction) +
                                         (cell.y * Data.RotationMatrix[3] * direction));
                     break;
                 case Tetromino.T:
@@ -228,10 +228,10 @@ public class Piece : MonoBehaviour
                 case Tetromino.S:
                 case Tetromino.Z:
                 default:
-                    x = Mathf.RoundToInt((cell.x *Data.RotationMatrix[0] * direction) +
+                    x = Mathf.RoundToInt((cell.x * Data.RotationMatrix[0] * direction) +
                                          (cell.y * Data.RotationMatrix[1] * direction));
                     
-                    y = Mathf.RoundToInt((cell.x *Data.RotationMatrix[2] * direction) +
+                    y = Mathf.RoundToInt((cell.x * Data.RotationMatrix[2] * direction) +
                                          (cell.y * Data.RotationMatrix[3] * direction));
                     break;
             }

@@ -74,6 +74,7 @@ public class Board : MonoBehaviour
         GameOver();
         activePiece.GameOver();
         hold.GameOver();
+        score.GameOver();
     }
 
     public void Reload()
