@@ -12,23 +12,52 @@ public class Piece : MonoBehaviour
     public int rotationIndex { get; private set; }
 
     private float stepDelay = 1f;
+    private float softDelay = 0.1f;
     private float moveDelay = 0.1f;
     private float lockDelay = 0.5f;
+    private float autoDelay = 0.15f;
+
+    private float leftAutoTime;
+    private float rightAutoTime;
+    private float downAutoTime;
     
     private float stepTime;
+    private float softTime;
     private float moveTime;
     private float lockTime;
 
     private bool holdcnt;
     private bool Isholded;
 
-    private void Start()
+    private void Awake()
     {
         setting = FindObjectOfType<Setting>();
         hold = FindObjectOfType<Hold>();
         score = FindObjectOfType<Score>();
+
+        moveDelay = setting.ARR;
+        autoDelay = setting.DAS;
+        softDelay = setting.SDF;
+        
+        setting.OnHandlingChanged.AddListener(OnHandling);
     }
 
+    private void OnHandling(string str, float f)
+    {
+        switch (str)
+        {
+            case "ARR":
+                moveDelay = f;
+                break;
+            case "DAS":
+                autoDelay = f;
+                break;
+            case "SDF":
+                softDelay = f;
+                break;
+        }
+    }
+    
     public void Initialize(Board board ,Vector3Int position, TetrominoData data)
     {
         this.board = board;
@@ -37,7 +66,8 @@ public class Piece : MonoBehaviour
         
         rotationIndex = 0;
         stepTime = Time.time + stepDelay;
-        moveTime = Time.time + moveDelay;
+        softTime = Time.time + 1/softDelay;
+        moveTime = Time.time + moveDelay * Time.deltaTime;
         lockTime = 0f;
         
         if (cells == null)
@@ -59,68 +89,127 @@ public class Piece : MonoBehaviour
         
         if (!setting.isOutOnFocus)
         {
-            if (Input.GetKeyDown(setting.rotate) || Input.GetKeyDown(setting.rotate2))
-            {
-                Rotate(1);
-            }
-
-            if (Input.GetKeyDown(setting.rotateback) || Input.GetKeyDown(setting.rotateback2))
-            {
-                Rotate(-1);
-            }
-
-            if (Input.GetKeyDown(setting.harddrop))
-            {
-                HardDrop();
-                return;
-            }
-
-            if (Input.GetKeyDown(setting.hold) || Input.GetKeyDown(setting.hold2))
-            {
-                if (!holdcnt)
-                {
-                    hold.Holding(this);
-                    board.SpawnPiece(holdcnt, Isholded);
-                    holdcnt = true;
-                    Isholded = true;
-                    return;
-                }
-            }
-        }
-        
-        if (Time.time > moveTime)
-        {
+            KeyMoveInputs();
+            
             HandleMoveInputs();
         }
-
+        
         if (Time.time >= stepTime)
         {
             Step();
         }
-
-
+        
         board.Set(this);
 
+    }
+
+    private void KeyMoveInputs()
+    {
+        if (Input.GetKeyDown(setting.rotate) || Input.GetKeyDown(setting.rotate2))
+        {
+            Rotate(1);
+        }
+
+        if (Input.GetKeyDown(setting.rotateback) || Input.GetKeyDown(setting.rotateback2))
+        {
+            Rotate(-1);
+        }
+
+        if (Input.GetKeyDown(setting.harddrop))
+        {
+            HardDrop();
+            return;
+        }
+
+        if (Input.GetKeyDown(setting.hold) || Input.GetKeyDown(setting.hold2))
+        {
+            if (!holdcnt)
+            {
+                hold.Holding(this);
+                board.SpawnPiece(holdcnt, Isholded);
+                holdcnt = true;
+                Isholded = true;
+            }
+        }
     }
     
     private void HandleMoveInputs()
     {
-        if (setting.isOutOnFocus) return;
+        if (leftAutoTime >= autoDelay * Time.deltaTime)
+        {
+            if (moveDelay == 0)
+            {
+                while (Move(Vector2Int.left))
+                {
+                    // Do nothing
+                }
+            }
+            else if (Time.time > moveTime)
+            {
+                Move(Vector2Int.left);
+            }
+        }
+        else if (rightAutoTime >= autoDelay * Time.deltaTime)
+        {
+            if (moveDelay == 0)
+            {
+                while (Move(Vector2Int.right))
+                {
+                    // Do nothing
+                }
+            }
+            else if (Time.time > moveTime)
+            {
+                Move(Vector2Int.right);
+            }    
+            
+        }
+        
         
         if (Input.GetKey(setting.softdrop) || Input.GetKey(setting.softdrop2))
         {
-            if (Move(Vector2Int.down)) {
+            if (softDelay > 40)
+            {
+                while (Move(Vector2Int.down))
+                {
+                    // Do nothing
+                }
+                
                 stepTime = Time.time + stepDelay;
+            }
+            else if (Time.time > softTime)
+            {
+                if (Move(Vector2Int.down))
+                {
+                    stepTime = Time.time + stepDelay;
+                    softTime = Time.time + 1/softDelay;
+                }
             }
         }
         
         if (Input.GetKey(setting.moveleft) || Input.GetKey(setting.moveleft2))
         {
-            Move(Vector2Int.left);
+            if (leftAutoTime == 0)
+            {
+                Move(Vector2Int.left);
+            }
+            rightAutoTime = 0f;
+            leftAutoTime += Time.deltaTime;
         }
         else if (Input.GetKey(setting.moveright) || Input.GetKey(setting.moveright2))
         {
-            Move(Vector2Int.right);
+            if (rightAutoTime == 0)
+            {
+                Move(Vector2Int.right);
+            }
+            leftAutoTime = 0f;
+            rightAutoTime += Time.deltaTime;
+
+        }
+        else
+        {
+            leftAutoTime = 0f;
+            rightAutoTime = 0f;
         }
     }
 
@@ -190,7 +279,7 @@ public class Piece : MonoBehaviour
         if (valid)
         {
             position = newPosition;
-            moveTime = Time.time + moveDelay;
+            moveTime = Time.time + moveDelay * Time.deltaTime;
             lockTime = 0f;
             score.s_rotate = false;
             

@@ -18,7 +18,7 @@ public class Keybind : MonoBehaviour
         keyConflict = FindObjectOfType<KeyConflict>();
         button = GetComponent<Button>();
         text = GetComponentInChildren<TextMeshProUGUI>();
-        text.text = setting.GetKeyString(gameObject.name);
+        text.text = setting.GetKeyCode(gameObject.name).ToString();
     }
 
     public void Clicked()
@@ -26,6 +26,11 @@ public class Keybind : MonoBehaviour
         StartCoroutine(ClickedCoroutine());
     }
 
+    public void Changed()
+    {
+        Debug.Log("e");
+    }
+    
     private IEnumerator ClickedCoroutine()
     {
         button.interactable = false;

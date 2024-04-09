@@ -47,11 +47,8 @@ public class KeyConflict : MonoBehaviour
                 }
                 else if (key.Value == KeyCode.None)
                 {
-                    Debug.Log("e");
                     foreach (var keybinds in keybind)
                     {
-                        Debug.Log(keybinds.text.text);
-                        Debug.Log(key.Value.ToString());
                         if (keybinds.text.text == key.Value.ToString())
                         {
                             keybinds.text.color = Color.yellow;

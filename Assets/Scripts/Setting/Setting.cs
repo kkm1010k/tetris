@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Setting : MonoBehaviour
 {
@@ -49,6 +50,42 @@ public class Setting : MonoBehaviour
     [HideInInspector]
     public KeyCode softdrop2 = KeyCode.S;
 
+    private float V_ARR = 0.5f;
+    private float V_DAS = 8f;
+    private float V_SDF = 40f;
+    [HideInInspector]
+    public UnityEvent<string, float> OnHandlingChanged;
+
+    public float ARR
+    {
+        get => V_ARR;
+        set
+        {
+            V_ARR = value;
+            OnHandlingChanged?.Invoke("ARR", V_ARR);
+        }
+    }
+    
+    public float DAS
+    {
+        get => V_DAS;
+        set
+        {
+            V_DAS = value;
+            OnHandlingChanged?.Invoke("DAS", V_DAS);
+        } 
+    }
+    
+    public float SDF
+    {
+        get => V_SDF;
+        set
+        {
+            V_SDF = value;
+            OnHandlingChanged?.Invoke("SDF", V_SDF);
+        }
+    }
+    
     [HideInInspector]
     public bool isOutOnFocus;
 
@@ -96,7 +133,7 @@ public class Setting : MonoBehaviour
         };
     }
     
-    public void ResetAll()
+    public void ResetAllKey()
     {
         moveleft = KeyCode.LeftArrow;
         moveright = KeyCode.RightArrow;
@@ -114,56 +151,14 @@ public class Setting : MonoBehaviour
         harddrop2 = KeyCode.R;
         softdrop2 = KeyCode.S;
     }
-    
-    public void ResetOnce(string key)
+
+    public void ResetAllHandling()
     {
-        switch (key)
-        {
-            case "moveleft":
-                moveleft = KeyCode.LeftArrow;
-                break;
-            case "moveright":
-                moveright = KeyCode.RightArrow;
-                break;
-            case "rotate":
-                rotate = KeyCode.UpArrow;
-                break;
-            case "rotateback":
-                rotateback = KeyCode.LeftControl;
-                break;
-            case "hold":
-                hold = KeyCode.LeftShift;
-                break;
-            case "harddrop":
-                harddrop = KeyCode.Space;
-                break;
-            case "softdrop":
-                softdrop = KeyCode.DownArrow;
-                break;
-            
-            case "moveleft2":
-                moveleft2 = KeyCode.A;
-                break;
-            case "moveright2":
-                moveright2 = KeyCode.D;
-                break;
-            case "rotate2":
-                rotate2 = KeyCode.W;
-                break;
-            case "rotateback2":
-                rotateback2 = KeyCode.RightControl;
-                break;
-            case "hold2":
-                hold2 = KeyCode.RightShift;
-                break;
-            case "harddrop2":
-                harddrop2 = KeyCode.R;
-                break;
-            case "softdrop2":
-                softdrop2 = KeyCode.S;
-                break;
-        }
+        ARR = 0.5f;
+        DAS = 8f;
+        SDF = 40f;
     }
+    
     
     public void T_SetKey(string key, KeyCode Code)
     {
@@ -265,27 +260,20 @@ public class Setting : MonoBehaviour
         }
     }
     
-    public string GetKeyString(string gameObjectName)
+    public void SetHandling(string key, float value)
     {
-        return gameObjectName switch
+        switch (key)
         {
-            "moveleft" => moveleft.ToString(),
-            "moveright" => moveright.ToString(),
-            "rotate" => rotate.ToString(),
-            "rotateback" => rotateback.ToString(),
-            "hold" => hold.ToString(),
-            "harddrop" => harddrop.ToString(),
-            "softdrop" => softdrop.ToString(),
-            
-            "moveleft2" => moveleft2.ToString(),
-            "moveright2" => moveright2.ToString(),
-            "rotate2" => rotate2.ToString(),
-            "rotateback2" => rotateback2.ToString(),
-            "hold2" => hold2.ToString(),
-            "harddrop2" => harddrop2.ToString(),
-            "softdrop2" => softdrop2.ToString(),
-            _ => null
-        };
+            case "ARR":
+                ARR = value;
+                break;
+            case "DAS":
+                DAS = value;
+                break;
+            case "SDF":
+                SDF = value;
+                break;
+        }
     }
     
     public KeyCode GetKeyCode(string gameObjectName)
@@ -331,6 +319,17 @@ public class Setting : MonoBehaviour
             "harddrop2" => t_harddrop2,
             "softdrop2" => t_softdrop2,
             _ => KeyCode.None
+        };
+    }
+
+    public float GetHandling(string gameObjectName)
+    {
+        return gameObjectName switch
+        {
+            "ARR" => ARR,
+            "DAS" => DAS,
+            "SDF" => SDF,
+            _ => 0f
         };
     }
 }

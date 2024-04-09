@@ -25,7 +25,7 @@ public class KeyInput : MonoBehaviour
 
         if (isActive)
         {
-            tmp.text = $"now : <{setting.GetKeyString(obj)}>";
+            tmp.text = $"now : <{setting.GetKeyCode(obj).ToString()}>";
         }
     }
     
