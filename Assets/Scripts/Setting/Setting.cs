@@ -55,7 +55,7 @@ public class Setting : MonoBehaviour
     private float V_SDF = 40f;
     [HideInInspector]
     public UnityEvent<string, float> OnHandlingChanged;
-
+    
     public float ARR
     {
         get => V_ARR;
@@ -86,6 +86,11 @@ public class Setting : MonoBehaviour
         }
     }
     
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
     [HideInInspector]
     public bool isOutOnFocus;
 

@@ -3,20 +3,39 @@ using UnityEngine;
 
 public class Score : MonoBehaviour
 {
-    public Piece piece;
-    public Board board;
+    [SerializeField] private Piece piece;
+    [SerializeField] private Board board;
+    
+    [Space]
     [SerializeField] private TMP_Text score;
-    [SerializeField] private TMP_Text line;
     [SerializeField] private TMP_Text combo;
-
+    
     public int s_line;
     public bool s_rotate;
     public bool s_pclear;
 
     public bool b2b;
-    public int com = -1;
+    private int V_com = -1;
+    public int com
+    {
+        get => V_com;
+        set
+        {
+            V_com = value;
+            combo.text = $"{value}";
+        }
+    }
 
-    public int s_score;
+    private int V_score;
+    public int s_score
+    {
+        get => V_score;
+        set
+        {
+            V_score = value;
+            score.text = $"{value}";
+        }
+    }
     public int a_score;
 
     private int cnt;
@@ -34,13 +53,6 @@ public class Score : MonoBehaviour
         a_score = 0;
 
     }
-    
-    private void Update()
-    {
-        line.text = $"{s_line}";
-        combo.text = $"{com}";
-        score.text = $"{s_score}";
-    }
 
     public void Set()
     {
@@ -49,7 +61,7 @@ public class Score : MonoBehaviour
             a_score = 10;
             b2b = false;
             s_score += a_score * 10;
-            Debug.Log($"{a_score} {b2b} dmg");
+            //Debug.Log($"{a_score} {b2b} dmg");
             a_score = 0;
             return;
         }
@@ -175,6 +187,15 @@ public class Score : MonoBehaviour
         {
             cnt++;
         }
+    }
+
+    public void OnAttack(int dmg)
+    {
+        
+    }
+
+    public void OnDamaged(int dmg)
+    {
         
     }
 }

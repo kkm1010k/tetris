@@ -1,14 +1,16 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UI;
 
 public class Board : MonoBehaviour
 {
     public Tilemap tilemap { get; private set; }
     public Piece activePiece { get; private set; }
-    public Next next { get; private set; }
-    public Hold hold  { get; private set; }
-    public Score score { get; private set; }
+    private Next next;
+    private Hold hold;
+    private Score score;
     
     public TetrominoData[] tetrominos;
     public Vector3Int spawnPosition;
@@ -25,13 +27,16 @@ public class Board : MonoBehaviour
             return new RectInt(position, boardSize + new Vector2Int(0,3));
         }
     }
+
+    [SerializeField] private Image image;
+    
     private void Awake()
     {
         tilemap = GetComponentInChildren<Tilemap>();
-        activePiece = GetComponentInChildren<Piece>();
-        hold = GameObject.Find("Board_Hold").GetComponent<Hold>();
-        next = GameObject.Find("Board_Next").GetComponent<Next>();
-        score = GameObject.Find("Board_Score").GetComponent<Score>();
+        activePiece = GetComponent<Piece>();
+        hold = FindObjectOfType<Hold>();
+        next = FindObjectOfType<Next>();
+        score = FindObjectOfType<Score>();
         
         for (var i = 0; i < tetrominos.Length; i++)
         {
@@ -41,8 +46,24 @@ public class Board : MonoBehaviour
 
     private void Start()
     {
-        SpawnPiece();
+        StartCoroutine(MainCoroutine());
     }
+
+    private IEnumerator MainCoroutine()
+    {
+        var startTime = Time.time;
+        image.color = new Color(56/255f, 56/255f, 56/255f, 1);
+        while (startTime + 2 > Time.time)
+        {
+            var seq = (Time.time - startTime) / 2f * 1f;
+            image.color = new Color(56/255f, 56/255f, 56/255f, 1 - seq);
+            yield return null;
+        }
+        image.color = new Color(1, 1, 1, 0);
+        SpawnPiece();
+        
+    }
+    
     public void SpawnPiece(bool holdcnt = false, bool Isholded = false)
     {
         Reload();

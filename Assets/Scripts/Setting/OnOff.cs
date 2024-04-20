@@ -7,26 +7,23 @@ public class OnOff : MonoBehaviour
     private GameObject setting;
     private GameObject panel;
     
+    [HideInInspector]
     public UnityEvent OnPanelOff;
     
     private void Start()
     {
         settingController = FindObjectOfType<Setting>();
         setting = GameObject.FindWithTag("setting");
-        panel = setting.transform.GetChild(0).gameObject;
     }
 
     public void On()
     {
-        settingController.isOutOnFocus = true;
-        panel.SetActive(true);
+        
     }
     
     public void Off()
     {
-        settingController.isOutOnFocus = false;
         OnPanelOff.Invoke();
-        panel.SetActive(false);
     }
 
     public void Toggle()

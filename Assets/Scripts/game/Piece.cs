@@ -83,6 +83,11 @@ public class Piece : MonoBehaviour
 
     private void Update()
     {
+        if (!board)
+        {
+            return;
+        }
+        
         board.Clear(this);
 
         lockTime += Time.deltaTime;

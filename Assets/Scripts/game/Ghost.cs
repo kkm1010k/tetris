@@ -20,6 +20,11 @@ public class Ghost : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (trackingPiece.cells == null)
+        {
+            return;
+        }
+        
         Clear();
         Copy();
         Drop();

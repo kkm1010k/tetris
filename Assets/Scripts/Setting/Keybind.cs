@@ -11,12 +11,27 @@ public class Keybind : MonoBehaviour
     [HideInInspector]
     public TextMeshProUGUI text;
     private KeyConflict keyConflict;
-    private void Start()
+    private Transform popUp;
+    private OnOff onoff;
+    private void Awake()
     {
         setting = FindObjectOfType<Setting>();
-        keyInput = FindObjectOfType<KeyInput>();
-        keyConflict = FindObjectOfType<KeyConflict>();
         button = GetComponent<Button>();
+        popUp = FindObjectOfType<GridChanger>().transform.GetChild(2);
+        keyInput = popUp.GetComponentInChildren<KeyInput>();
+        keyConflict = popUp.GetComponentInChildren<KeyConflict>();
+        onoff = FindObjectOfType<OnOff>();
+        
+        onoff.OnPanelOff.AddListener(Exited);
+    }
+
+    public void Exited()
+    {
+        setting.SetKey(gameObject.name,setting.GetTempKeyCode(gameObject.name));
+    }
+    
+    private void Start()
+    {
         text = GetComponentInChildren<TextMeshProUGUI>();
         text.text = setting.GetKeyCode(gameObject.name).ToString();
     }

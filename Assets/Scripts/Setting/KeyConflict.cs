@@ -8,17 +8,19 @@ public class KeyConflict : MonoBehaviour
     
     private void Start()
     {
-        keybind.AddRange(FindObjectsOfType<Keybind>());
         setting = FindObjectOfType<Setting>();
     }
     
+    // ReSharper disable Unity.PerformanceAnalysis
     public void ResetConflict()
     {
+        keybind.Clear();
+        keybind.AddRange(FindObjectsOfType<Keybind>());
         foreach (var key in keybind)
         {
             if (key.text.color == Color.red)
             {
-                setting.SetKey(key.gameObject.name, setting.GetTempKeyCode(key.gameObject.name));
+                setting.T_SetKey(key.gameObject.name, key.text.text == "None" ? KeyCode.None : (KeyCode) System.Enum.Parse(typeof(KeyCode), key.text.text));
             }
             key.text.color = Color.black;
         }
@@ -41,7 +43,7 @@ public class KeyConflict : MonoBehaviour
                         if (keybinds.text.text == key.Value.ToString())
                         {
                             keybinds.text.color = Color.red;
-                            setting.SetKey(keybinds.gameObject.name, KeyCode.None);
+                            setting.T_SetKey(keybinds.gameObject.name, KeyCode.None);
                         }
                     }
                 }
@@ -52,7 +54,7 @@ public class KeyConflict : MonoBehaviour
                         if (keybinds.text.text == key.Value.ToString())
                         {
                             keybinds.text.color = Color.yellow;
-                            setting.SetKey(keybinds.gameObject.name, KeyCode.None);
+                            setting.T_SetKey(keybinds.gameObject.name, KeyCode.None);
                         }
                     }
                 }
