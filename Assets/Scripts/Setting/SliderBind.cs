@@ -15,7 +15,7 @@ public class SliderBind : MonoBehaviour
     {
         setting = FindObjectOfType<Setting>();
         slider = GetComponent<Slider>();
-        value = GetComponentInChildren<TMP_InputField>();
+        value = transform.parent.GetComponentInChildren<TMP_InputField>();
         onoff = FindObjectOfType<OnOff>();
         
         value.text = setting.GetHandling(gameObject.name).ToString();

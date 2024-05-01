@@ -8,11 +8,11 @@ public class Keybind : MonoBehaviour
     private Setting setting;
     private KeyInput keyInput;
     private Button button;
-    [HideInInspector]
     public TextMeshProUGUI text;
     private KeyConflict keyConflict;
     private Transform popUp;
     private OnOff onoff;
+    public string tempString;
     private void Awake()
     {
         setting = FindObjectOfType<Setting>();
@@ -33,7 +33,10 @@ public class Keybind : MonoBehaviour
     private void Start()
     {
         text = GetComponentInChildren<TextMeshProUGUI>();
-        text.text = setting.GetKeyCode(gameObject.name).ToString();
+        tempString = setting.GetKeyCode(gameObject.name).ToString();
+        SwitchString(setting.GetKeyCode(gameObject.name));
+        keyConflict.ResetConflict();
+        keyConflict.CheckConflict();
     }
 
     public void Clicked()
@@ -63,6 +66,7 @@ public class Keybind : MonoBehaviour
                     yield break;
                 case KeyCode.Backspace:
                     keyInput.Show(false);
+                    tempString = "None";
                     text.text = "None";
                     keyInput.code = KeyCode.None;
                     setting.T_SetKey(gameObject.name, KeyCode.None);
@@ -78,7 +82,8 @@ public class Keybind : MonoBehaviour
         }
         
         keyInput.Show(false);
-        text.text = keyInput.code.ToString();
+        tempString = keyInput.code.ToString();
+        SwitchString(keyInput.code);
         setting.T_SetKey(gameObject.name, keyInput.code);
         keyConflict.ResetConflict();
         keyConflict.CheckConflict();
@@ -89,5 +94,48 @@ public class Keybind : MonoBehaviour
     public void ChangeColor(Color color)
     {
         text.color = color;
+    }
+
+    private void SwitchString(KeyCode code)
+    {
+        switch (code)
+        {
+            case KeyCode.LeftArrow:
+                text.text = "\u2190";
+                text.fontSize = 40;
+                break;
+            case KeyCode.RightArrow:
+                text.text = "\u2192";
+                text.fontSize = 40;
+                break;
+            case KeyCode.UpArrow:
+                text.text = "\u2191";
+                text.fontSize = 40;
+                break;
+            case KeyCode.DownArrow:
+                text.text = "\u2193";
+                text.fontSize = 40;
+                break;
+            case KeyCode.LeftControl:
+                text.text = "LCtrl";
+                text.fontSize = 25;
+                break;
+            case KeyCode.RightControl:
+                text.text = "RCtrl";
+                text.fontSize = 25;
+                break;
+            case KeyCode.LeftShift:
+                text.text = "LShift";
+                text.fontSize = 25;
+                break;
+            case KeyCode.RightShift:
+                text.text = "RShift";
+                text.fontSize = 25;
+                break;
+            default:
+                text.text = code.ToString();
+                text.fontSize = 25;
+                break;
+        }
     }
 }

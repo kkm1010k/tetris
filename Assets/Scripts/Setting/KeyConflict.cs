@@ -20,7 +20,7 @@ public class KeyConflict : MonoBehaviour
         {
             if (key.text.color == Color.red)
             {
-                setting.T_SetKey(key.gameObject.name, key.text.text == "None" ? KeyCode.None : (KeyCode) System.Enum.Parse(typeof(KeyCode), key.text.text));
+                setting.T_SetKey(key.gameObject.name, key.tempString == "None" ? KeyCode.None : (KeyCode) System.Enum.Parse(typeof(KeyCode), key.tempString));
             }
             key.text.color = Color.black;
         }
@@ -40,7 +40,7 @@ public class KeyConflict : MonoBehaviour
                 {
                     foreach (var keybinds in keybind)
                     {
-                        if (keybinds.text.text == key.Value.ToString())
+                        if (keybinds.tempString == key.Value.ToString())
                         {
                             keybinds.text.color = Color.red;
                             setting.T_SetKey(keybinds.gameObject.name, KeyCode.None);
@@ -51,7 +51,7 @@ public class KeyConflict : MonoBehaviour
                 {
                     foreach (var keybinds in keybind)
                     {
-                        if (keybinds.text.text == key.Value.ToString())
+                        if (keybinds.tempString == key.Value.ToString())
                         {
                             keybinds.text.color = Color.yellow;
                             setting.T_SetKey(keybinds.gameObject.name, KeyCode.None);

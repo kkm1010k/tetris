@@ -44,7 +44,7 @@ public class GridChanger : MonoBehaviour
             yield break;
         }
         
-        yield return StartCoroutine(SpinCoroutine(name, true));
+        yield return StartCoroutine(SpinCoroutine("", true));
         
         
         
@@ -84,36 +84,82 @@ public class GridChanger : MonoBehaviour
             var selectedGridObj = GetSelectedGridObjects(obj);
             var objtext = obj.GetComponentInChildren<TextMeshProUGUI>();
             var cnt = objtext ? AdjustTextAndGetCount(objtext, selectedGridObj.Count) : 0;
-
+    
             for (var i = 0; i < selectedGridObj.Count; i++)
             {
-                var newobj = InstantiateNewObject(obj, selectedGridObj[i]);
-                if (objtext)
-                {
-                    var txt = newobj.GetComponentInChildren<TextMeshProUGUI>();
-                    txt.text = objtext.text.Substring(i * cnt, cnt);
-                }
-                newobj.name = obj.name;
+                SetGridProperties(obj, selectedGridObj[i], objtext, cnt, i);
             }
         }
         
         foreach (var obj in objList[1])
         {
-            var selectedGridObj = GetSelectedGridObjects(obj);
-            var startPos = selectedGridObj[0].transform.position;
-            var lastPos = selectedGridObj[^1].transform.position;
-            var size = new Vector2(
-                lastPos.x - startPos.x + 100,
-                lastPos.y - startPos.y + 100
-                );
-            var anchoredPosition = new Vector2(
-                size.x / 2 - 50,
-                size.y / 2 - 50
-                );
-            // ReSharper disable once UnusedVariable
-            var newobj = InstantiateCustomObject(obj,selectedGridObj[0], size, anchoredPosition);
-            newobj.name = obj.name;
+            var selectedGridObj = GetSelectedGridObjects2d(obj);
+            for (var i = 0; i < selectedGridObj.Count; i++)
+            {
+                for (var j = 0; j < selectedGridObj[i].Count; j++)
+                {
+                    SetMultiGridProperties(obj, selectedGridObj, i, j);
+                }
+            }
         }
+    }
+
+    private void SetGridProperties(GameObject obj, GameObject gridObj, TextMeshProUGUI objtext, int cnt, int i)
+    {
+        var property = gridObj.GetComponent<GridProperty>();
+        property.isActive = true;
+        property.endSize = new Vector2(100, 100);
+        var rectTransform = gridObj.transform.GetComponent<RectTransform>();
+        property.endPosition = rectTransform.position;
+    
+        var newobj = InstantiateNewObject(obj, gridObj);
+        if (objtext)
+        {
+            var txt = newobj.GetComponentInChildren<TextMeshProUGUI>();
+            txt.text = objtext.text.Substring(i * cnt, cnt);
+        }
+    }
+
+    private void SetMultiGridProperties(GameObject obj, List<List<GameObject>> selectedGridObj, int i, int j)
+    {
+        var property = selectedGridObj[i][j].GetComponent<GridProperty>();
+        var rectTransform = selectedGridObj[i][j].transform.GetComponent<RectTransform>();
+        if (i == 0 && j == 0)
+        {
+            property.isActive = true;
+            property.endSize = new Vector2(selectedGridObj.Count * 100, selectedGridObj[i].Count * 100);
+            var temp = CalculateTemp(selectedGridObj);
+            property.endPosition = rectTransform.position + new Vector3(temp.x, temp.y);
+            InstantiateNewObject(obj, selectedGridObj[i][j]);
+        }
+        else
+        {
+            property.isActive = false;
+            property.endSize = new Vector2(100, 100);
+            property.endPosition = rectTransform.position;
+        }
+    }
+
+    private Vector2 CalculateTemp(List<List<GameObject>> selectedGridObj)
+    {
+        var temp = Vector2.zero;
+        for (var i = 0; i < selectedGridObj.Count; i++)
+        {
+            for (var j = 0; j < selectedGridObj[i].Count; j++)
+            {
+                var rect = GetWorldRect(selectedGridObj[i][j].GetComponent<RectTransform>());
+
+                if (i != 0)
+                {
+                    temp.x += rect.width / 2;
+                }
+                if (j != 0)
+                {
+                    temp.y += rect.height / 2;
+                }
+            }
+        }
+        return temp;
     }
 
     private List<GameObject> GetSelectedGridObjects(GameObject obj)
@@ -127,8 +173,39 @@ public class GridChanger : MonoBehaviour
             {
                 if (r1.Overlaps(GetWorldRect(gridObj.transform.parent.GetComponent<RectTransform>())))
                 {
+                    if (!gridObj.GetComponent<GridProperty>())
+                    {
+                        gridObj.AddComponent<GridProperty>();
+                    }
                     selectedGridObj.Add(gridObj);
                 }
+            }
+        }
+        return selectedGridObj;
+    }
+    
+    private List<List<GameObject>> GetSelectedGridObjects2d(GameObject obj)
+    {
+        var selectedGridObj = new List<List<GameObject>>();
+        var r1 = GetWorldRect(obj.GetComponent<RectTransform>());
+
+        foreach (var grid in gridSpawner.gridList)
+        {
+            var tempList = new List<GameObject>();
+            foreach (var gridObj in grid)
+            {
+                if (r1.Overlaps(GetWorldRect(gridObj.transform.parent.GetComponent<RectTransform>())))
+                {
+                    if (!tempList.Any() && !gridObj.GetComponent<GridProperty>())
+                    {
+                        gridObj.AddComponent<GridProperty>();
+                    }
+                    tempList.Add(gridObj);
+                }
+            }
+            if (tempList.Any())
+            {
+                selectedGridObj.Add(tempList);
             }
         }
         return selectedGridObj;
@@ -159,20 +236,7 @@ public class GridChanger : MonoBehaviour
         newRect.anchorMin = new Vector2(0.5f, 0.5f);
         newRect.anchorMax = new Vector2(0.5f, 0.5f);
         newRect.anchoredPosition = Vector2.zero;
-        newobj.SetActive(false);
-        return newobj;
-    }
-    
-    private GameObject InstantiateCustomObject(GameObject obj, GameObject gridobj, Vector2 sizeDelta, Vector2 anchoredPosition)
-    {
-        var newobj = Instantiate(obj, gridobj.transform);
-        newobj.transform.localPosition = Vector3.zero;
-        var newRect = newobj.GetComponent<RectTransform>();
-        newRect.sizeDelta = sizeDelta;
-        newRect.pivot = new Vector2(0.5f, 0.5f);
-        newRect.anchorMin = new Vector2(0.5f, 0.5f);
-        newRect.anchorMax = new Vector2(0.5f, 0.5f);
-        newRect.anchoredPosition = anchoredPosition;
+        newobj.name = obj.name;
         newobj.SetActive(false);
         return newobj;
     }
@@ -204,7 +268,7 @@ public class GridChanger : MonoBehaviour
         var gridList = gridSpawner.gridList;
         var startTime = Time.time;
         var cnt = 0;
-        var time = 1f;
+        var time = 0.3f;
         Coroutine coroutine = null;
         
         while (startTime + time > Time.time)
@@ -231,12 +295,21 @@ public class GridChanger : MonoBehaviour
         isSpinning = false;
     }
     
-    private IEnumerator Spin(GameObject obj, bool isHalf = false)
+    // ReSharper disable Unity.PerformanceAnalysis
+    private IEnumerator Spin(GameObject gridObj, bool isHalf = false)
     {
-        var time = 0.5f;
-        yield return StartCoroutine(SpinWhileCoroutine(time, obj.transform.rotation, Quaternion.Euler(-45, -90, 45), obj));
+        var time = 0.3f;
+        var property = gridObj.GetComponent<GridProperty>();
+        var rectTransform = gridObj.GetComponent<RectTransform>();
+        
+        var endSize = property ? property.endSize : rectTransform.sizeDelta;
+        var endPosition = property ? property.endPosition : rectTransform.position;
+        
+        yield return StartCoroutine(SpinWhileCoroutine(time, gridObj, gridObj.transform.rotation, Quaternion.Euler(-45, -90, 45), endSize, endPosition));
+        
+        gridObj.SetActive(!property || property.isActive);
 
-        foreach (Transform child in obj.transform)
+        foreach (Transform child in gridObj.transform)
         {
             
             if (child.gameObject.activeSelf)
@@ -249,26 +322,42 @@ public class GridChanger : MonoBehaviour
             }
         }
         
+        if (property)
+        {
+            property.endSize = new Vector2(100, 100);
+            property.endPosition = rectTransform.parent.position;
+            property.isActive = true;
+        }
+        
         if (isHalf)
         {
             yield break;
         }
         
-        yield return StartCoroutine(SpinWhileCoroutine( time, obj.transform.rotation, Quaternion.Euler(0, 0, 0), obj));
+        yield return StartCoroutine(SpinWhileCoroutine(time, gridObj, gridObj.transform.rotation, Quaternion.Euler(0, 0, 0), endSize, endPosition));
+        
     }
 
-    private IEnumerator SpinWhileCoroutine( float time, Quaternion startRot, Quaternion endRot, GameObject obj)
+    // ReSharper disable Unity.PerformanceAnalysis
+    private IEnumerator SpinWhileCoroutine(float time, GameObject gridObj, Quaternion startRot, Quaternion endRot, Vector2 endSize, Vector3 endPosition)
     {
+        var rectTransform = gridObj.GetComponent<RectTransform>();
         var startTime = Time.time;
+        var startSize = rectTransform.sizeDelta;
+        var startPosition = rectTransform.position;
         while (startTime + time > Time.time)
         {
             var seq = (Time.time - startTime) / time*50;
             for (var i = 0; i < seq; i++)
             {
-                obj.transform.rotation = Quaternion.Slerp(startRot, endRot, i/50f);
+                gridObj.transform.rotation = Quaternion.Slerp(startRot, endRot, i / 50f);
+                rectTransform.position = Vector3.Lerp(startPosition, endPosition, i / 50f);
+                rectTransform.sizeDelta = Vector2.Lerp(startSize, endSize, i / 50f);
             }
             yield return null;
         }
-        obj.transform.rotation = endRot;
+        gridObj.transform.rotation = endRot;
+        rectTransform.position = endPosition;
+        rectTransform.sizeDelta = endSize;
     }
 }
