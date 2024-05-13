@@ -3,24 +3,22 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Keybind : MonoBehaviour
+public class SettingKeybind : MonoBehaviour
 {
     private Setting setting;
     private KeyInput keyInput;
     private Button button;
     public TextMeshProUGUI text;
-    private KeyConflict keyConflict;
-    private Transform popUp;
-    private OnOff onoff;
+    private SettingKeyConflict keyConflict;
+    private SettingOnOff onoff;
     public string tempString;
     private void Awake()
     {
         setting = FindObjectOfType<Setting>();
         button = GetComponent<Button>();
-        popUp = FindObjectOfType<GridChanger>().transform.GetChild(2);
-        keyInput = popUp.GetComponentInChildren<KeyInput>();
-        keyConflict = popUp.GetComponentInChildren<KeyConflict>();
-        onoff = FindObjectOfType<OnOff>();
+        keyInput = FindObjectOfType<KeyInput>();
+        keyConflict = FindObjectOfType<SettingKeyConflict>();
+        onoff = FindObjectOfType<SettingOnOff>();
         
         onoff.OnPanelOff.AddListener(Exited);
     }
@@ -42,6 +40,11 @@ public class Keybind : MonoBehaviour
     public void Clicked()
     {
         StartCoroutine(ClickedCoroutine());
+    }
+
+    public void Changed()
+    {
+        Debug.Log("e");
     }
     
     private IEnumerator ClickedCoroutine()

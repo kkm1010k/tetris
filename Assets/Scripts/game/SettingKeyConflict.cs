@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KeyConflict : MonoBehaviour
+public class SettingKeyConflict : MonoBehaviour
 {
-    private List<Keybind> keybinds = new();
+    private List<SettingKeybind> keybinds = new();
     private Setting setting;
     
     private void Start()
@@ -15,7 +15,7 @@ public class KeyConflict : MonoBehaviour
     public void ResetConflict()
     {
         keybinds.Clear();
-        keybinds.AddRange(FindObjectsOfType<Keybind>());
+        keybinds.AddRange(FindObjectsOfType<SettingKeybind>());
         foreach (var key in keybinds)
         {
             if (key.text.color == Color.red)

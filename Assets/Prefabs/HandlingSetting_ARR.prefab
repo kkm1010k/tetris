@@ -626,8 +626,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1712240677596128446}
-        m_TargetAssemblyTypeName: SliderBind, Assembly-CSharp
+      - m_Target: {fileID: 1336482902080768510}
+        m_TargetAssemblyTypeName: SettingSliderBind, Assembly-CSharp
         m_MethodName: OnChangedInput
         m_Mode: 1
         m_Arguments:
@@ -666,7 +666,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1994592237062550721}
   - component: {fileID: 1372055816522683692}
-  - component: {fileID: 1712240677596128446}
+  - component: {fileID: 1336482902080768510}
   m_Layer: 5
   m_Name: ARR
   m_TagString: Untagged
@@ -748,8 +748,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1712240677596128446}
-        m_TargetAssemblyTypeName: SliderBind, Assembly-CSharp
+      - m_Target: {fileID: 1336482902080768510}
+        m_TargetAssemblyTypeName: SettingSliderBind, Assembly-CSharp
         m_MethodName: OnChangedSlider
         m_Mode: 1
         m_Arguments:
@@ -760,7 +760,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &1712240677596128446
+--- !u!114 &1336482902080768510
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -769,7 +769,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 8026462217158729548}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7ce70501c2352f44683249016da1372a, type: 3}
+  m_Script: {fileID: 11500000, guid: e13265d9f59b4450a2a0a72d7f517d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &8198882978544698208

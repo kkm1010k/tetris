@@ -1,3 +1,4 @@
+using QFSW.QC;
 using TMPro;
 using UnityEngine;
 
@@ -5,6 +6,7 @@ public class Score : MonoBehaviour
 {
     [SerializeField] private Piece piece;
     [SerializeField] private Board board;
+    [SerializeField] private Damage damage;
     
     [Space]
     [SerializeField] private TMP_Text score;
@@ -194,8 +196,9 @@ public class Score : MonoBehaviour
         
     }
 
-    public void OnDamaged(int dmg)
+    [Command]
+    public void OnSavage(int dmg)
     {
-        
+        damage.damageCount += dmg;
     }
 }

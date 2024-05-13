@@ -13,6 +13,7 @@ public class Board : MonoBehaviour
     private Score score;
     
     public TetrominoData[] tetrominos;
+    [SerializeField] private Tile nullTile;
     public Vector3Int spawnPosition;
     public Vector3Int spawnPositionadd;
     public Vector2Int boardSize = new(10, 20);
@@ -186,6 +187,8 @@ public class Board : MonoBehaviour
                 row++;
             }
         }
+        
+        //LineFill();
     }
 
     private bool IsLineFull(int row)
@@ -230,5 +233,43 @@ public class Board : MonoBehaviour
         }
 
         score.s_line++;
+    }
+    
+    public void LineFill(int n)
+    {
+        RectInt bounds = Bounds;
+        
+        for (var row = bounds.yMax - 1; row >= bounds.yMin; row--)
+        {
+            for (var col = bounds.xMin; col < bounds.xMax; col++)
+            {
+                Vector3Int position = new Vector3Int(col,row,0);
+                TileBase above = tilemap.GetTile(position);
+
+                position = new Vector3Int(col, row + n, 0);
+                tilemap.SetTile(position, above);
+            }
+            
+            for (var col = bounds.xMin; col < bounds.xMax; col++)
+            {
+                Vector3Int position = new Vector3Int(col,row,0);
+                tilemap.SetTile(position, null);
+            }
+        }
+
+        for (var i = 0; i < n; i++)
+        {
+            var rnd = Random.Range(bounds.xMin, bounds.xMax + 1);
+            
+            for (var col = bounds.xMin; col < bounds.xMax; col++)
+            {
+                if (col == rnd)
+                {
+                    continue;
+                }
+                Vector3Int position = new Vector3Int(col,bounds.yMin + i,0);
+                tilemap.SetTile(position, nullTile);
+            }
+        }
     }
 }
