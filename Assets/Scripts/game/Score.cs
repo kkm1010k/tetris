@@ -62,6 +62,12 @@ public class Score : MonoBehaviour
         {
             a_score = 10;
             b2b = false;
+            
+            if (a_score > 0)
+            {
+                OnAttack(a_score);
+            }
+            
             s_score += a_score * 10;
             //Debug.Log($"{a_score} {b2b} dmg");
             a_score = 0;
@@ -163,6 +169,11 @@ public class Score : MonoBehaviour
             case >= 11:
                 a_score += 5;
                 break;
+        }
+
+        if (a_score > 0)
+        {
+            OnAttack(a_score);
         }
         
         s_score += a_score * 10;

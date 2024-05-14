@@ -11,6 +11,7 @@ public class Board : MonoBehaviour
     private Next next;
     private Hold hold;
     private Score score;
+    private Damage damage;
     
     public TetrominoData[] tetrominos;
     [SerializeField] private Tile nullTile;
@@ -38,6 +39,7 @@ public class Board : MonoBehaviour
         hold = FindObjectOfType<Hold>();
         next = FindObjectOfType<Next>();
         score = FindObjectOfType<Score>();
+        damage = GetComponent<Damage>();
         
         for (var i = 0; i < tetrominos.Length; i++)
         {
@@ -187,8 +189,17 @@ public class Board : MonoBehaviour
                 row++;
             }
         }
+
+        if (score.s_line > 0)
+        {
+            return;
+        }
         
-        //LineFill();
+        if (damage.damageCount > 0)
+        {
+            LineFill(damage.damageCount);
+            damage.damageCount = 0;
+        }
     }
 
     private bool IsLineFull(int row)
