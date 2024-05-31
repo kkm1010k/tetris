@@ -23,6 +23,8 @@ public class NetworkController : NetworkBehaviour
     
     private async void Awake()
     {
+        Application.targetFrameRate = 60;
+        
         DontDestroyOnLoad(gameObject);
         
         uiController = FindObjectOfType<UIController>();

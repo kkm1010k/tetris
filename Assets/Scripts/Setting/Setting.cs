@@ -54,7 +54,7 @@ public class Setting : MonoBehaviour
     private float V_DAS = 8f;
     private float V_SDF = 40f;
     [HideInInspector]
-    public UnityEvent<string, float> OnHandlingChanged;
+    public UnityEvent<string, float> OnHandlingChanged = new();
     
     public float ARR
     {

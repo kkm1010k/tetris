@@ -87,6 +87,9 @@ public class Piece : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(Time.deltaTime);
+        Debug.Log(1/Time.deltaTime);
+        
         if (!board)
         {
             return;
@@ -144,6 +147,31 @@ public class Piece : MonoBehaviour
     
     private void HandleMoveInputs()
     {
+        if (Input.GetKey(setting.moveleft) || Input.GetKey(setting.moveleft2))
+        {
+            if (leftAutoTime == 0)
+            {
+                Move(Vector2Int.left);
+            }
+            rightAutoTime = 0f;
+            leftAutoTime += Time.deltaTime;
+        }
+        else if (Input.GetKey(setting.moveright) || Input.GetKey(setting.moveright2))
+        {
+            if (rightAutoTime == 0)
+            {
+                Move(Vector2Int.right);
+            }
+            leftAutoTime = 0f;
+            rightAutoTime += Time.deltaTime;
+
+        }
+        else
+        {
+            leftAutoTime = 0f;
+            rightAutoTime = 0f;
+        }
+        
         if (leftAutoTime >= autoDelay * Time.deltaTime)
         {
             if (moveDelay == 0)
@@ -170,10 +198,9 @@ public class Piece : MonoBehaviour
             else if (Time.time > moveTime)
             {
                 Move(Vector2Int.right);
-            }    
+            }
             
         }
-        
         
         if (Input.GetKey(setting.softdrop) || Input.GetKey(setting.softdrop2))
         {
@@ -194,31 +221,6 @@ public class Piece : MonoBehaviour
                     softTime = Time.time + 1/softDelay;
                 }
             }
-        }
-        
-        if (Input.GetKey(setting.moveleft) || Input.GetKey(setting.moveleft2))
-        {
-            if (leftAutoTime == 0)
-            {
-                Move(Vector2Int.left);
-            }
-            rightAutoTime = 0f;
-            leftAutoTime += Time.deltaTime;
-        }
-        else if (Input.GetKey(setting.moveright) || Input.GetKey(setting.moveright2))
-        {
-            if (rightAutoTime == 0)
-            {
-                Move(Vector2Int.right);
-            }
-            leftAutoTime = 0f;
-            rightAutoTime += Time.deltaTime;
-
-        }
-        else
-        {
-            leftAutoTime = 0f;
-            rightAutoTime = 0f;
         }
     }
 
