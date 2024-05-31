@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
@@ -31,6 +33,7 @@ public class Board : MonoBehaviour
     }
 
     [SerializeField] private Image image;
+    [SerializeField] private TMP_Text text;
     
     private void Awake()
     {
@@ -47,12 +50,26 @@ public class Board : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void StartGameInit(float time)
     {
-        StartCoroutine(MainCoroutine());
+        StartCoroutine(ShowCoroutine());
+        StartCoroutine(StartGame(time));
     }
 
-    private IEnumerator MainCoroutine()
+    private IEnumerator StartGame(float time)
+    {
+        while (time > NetworkManager.Singleton.ServerTime.TimeAsFloat)
+        {
+            text.text = $"Game Start in {time - NetworkManager.Singleton.ServerTime.TimeAsFloat}";
+            yield return null;
+        }
+        text.text = "Game Start!";
+        SpawnPiece();
+        yield return new WaitForSeconds(1);
+        text.text = "";
+    }
+
+    private IEnumerator ShowCoroutine()
     {
         var startTime = Time.time;
         image.color = new Color(56/255f, 56/255f, 56/255f, 1);
@@ -63,8 +80,7 @@ public class Board : MonoBehaviour
             yield return null;
         }
         image.color = new Color(1, 1, 1, 0);
-        SpawnPiece();
-        
+        yield return null;
     }
     
     public void SpawnPiece(bool holdcnt = false, bool Isholded = false)
@@ -282,5 +298,71 @@ public class Board : MonoBehaviour
                 tilemap.SetTile(position, nullTile);
             }
         }
+    }
+
+    public short[] GetTilemapArray()
+    {
+        var bounds = Bounds;
+        var tilemapArray = new short[bounds.size.x,bounds.size.y];
+
+        for (var i = 0; i < tilemapArray.GetLength(0); i++)
+        {
+            for (var j = 0; j < tilemapArray.GetLength(1); j++)
+            {
+                tilemapArray[i, j] = -1;
+            }
+        }
+
+        foreach (Vector3Int pos in bounds.allPositionsWithin)
+        {
+            if (tilemap.HasTile(pos))
+            {
+                Tile tile = tilemap.GetTile<Tile>(pos);
+                if (tile == tetrominos[0].tile)
+                {
+                    tilemapArray[pos.x + bounds.size.x / 2, pos.y + bounds.size.y / 2 - 1] = 0;
+                }
+                else if (tile == tetrominos[1].tile)
+                {
+                    tilemapArray[pos.x + bounds.size.x / 2, pos.y + bounds.size.y / 2 - 1] = 1;
+                }
+                else if (tile == tetrominos[2].tile)
+                {
+                    tilemapArray[pos.x + bounds.size.x / 2, pos.y + bounds.size.y / 2 - 1] = 2;
+                }
+                else if (tile == tetrominos[3].tile)
+                {
+                    tilemapArray[pos.x + bounds.size.x / 2, pos.y + bounds.size.y / 2 - 1] = 3;
+                }
+                else if (tile == tetrominos[4].tile)
+                {
+                    tilemapArray[pos.x + bounds.size.x / 2, pos.y + bounds.size.y / 2 - 1] = 4;
+                }
+                else if (tile == tetrominos[5].tile)
+                {
+                    tilemapArray[pos.x + bounds.size.x / 2, pos.y + bounds.size.y / 2 - 1] = 5;
+                }
+                else if (tile == tetrominos[6].tile)
+                {
+                    tilemapArray[pos.x + bounds.size.x / 2, pos.y + bounds.size.y / 2 - 1] = 6;
+                }
+                else
+                {
+                    tilemapArray[pos.x + bounds.size.x / 2, pos.y + bounds.size.y / 2 - 1] = -1;
+                }
+            }
+        }
+        
+        var tilemap1d = new short[bounds.size.x * bounds.size.y];
+        
+        for (var i = 0; i < bounds.size.x; i++)
+        {
+            for (var j = 0; j < bounds.size.y; j++)
+            {
+                tilemap1d[i * bounds.size.y + j] = tilemapArray[i, j];
+            }
+        }
+
+        return tilemap1d;
     }
 }

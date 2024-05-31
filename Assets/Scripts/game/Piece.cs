@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 public class Piece : MonoBehaviour
@@ -6,6 +7,8 @@ public class Piece : MonoBehaviour
     private Hold hold;
     private Score score;
     private Setting setting;
+    private NetworkController networkController;
+    
     public TetrominoData data { get; private set; }
     public Vector3Int[] cells { get; private set; }
     public Vector3Int position;
@@ -34,7 +37,8 @@ public class Piece : MonoBehaviour
         setting = FindObjectOfType<Setting>();
         hold = FindObjectOfType<Hold>();
         score = FindObjectOfType<Score>();
-
+        networkController = FindObjectOfType<NetworkController>();
+        
         moveDelay = setting.ARR;
         autoDelay = setting.DAS;
         softDelay = setting.SDF;
@@ -224,7 +228,6 @@ public class Piece : MonoBehaviour
         Isholded = false;
         board.Bag.Clear();
         board.sevenBag.Clear();
-        board.Reload();
         board.SpawnPiece();
         
     }
@@ -249,7 +252,9 @@ public class Piece : MonoBehaviour
         }
         board.Set(this);
         board.ClearLines();
-
+        
+        networkController.SetTileServerRpc(board.GetTilemapArray(), NetworkManager.Singleton.LocalClientId);
+        
         if (board.tilemap.GetTilesRangeCount(new Vector3Int(-5,-10,0), new Vector3Int(5,12,0)) == 0)
         {
             score.s_pclear = true;

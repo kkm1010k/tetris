@@ -1,12 +1,13 @@
-using QFSW.QC;
 using TMPro;
+using Unity.Netcode;
 using UnityEngine;
 
 public class Score : MonoBehaviour
 {
-    [SerializeField] private Piece piece;
-    [SerializeField] private Board board;
-    [SerializeField] private Damage damage;
+    private Piece piece;
+    private Board board;
+    private Damage damage;
+    private NetworkController networkController;
     
     [Space]
     [SerializeField] private TMP_Text score;
@@ -16,7 +17,7 @@ public class Score : MonoBehaviour
     public bool s_rotate;
     public bool s_pclear;
 
-    public bool b2b;
+    private bool b2b;
     private int V_com = -1;
     public int com
     {
@@ -42,6 +43,16 @@ public class Score : MonoBehaviour
 
     private int cnt;
 
+    
+    
+    private void Awake()
+    {
+        piece = FindObjectOfType<Piece>();
+        board = FindObjectOfType<Board>();
+        damage = FindObjectOfType<Damage>();
+        networkController = FindObjectOfType<NetworkController>();
+    }
+    
     public void GameOver()
     { 
         s_line = 0;
@@ -204,10 +215,9 @@ public class Score : MonoBehaviour
 
     public void OnAttack(int dmg)
     {
-        
+        networkController.OnAttackServerRpc(dmg, NetworkManager.Singleton.LocalClientId);
     }
-
-    [Command]
+    
     public void OnSavage(int dmg)
     {
         damage.damageCount += dmg;
