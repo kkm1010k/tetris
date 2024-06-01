@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Unity.Netcode;
@@ -96,7 +97,7 @@ public class NetworkController : NetworkBehaviour
             Debug.Log(count);
             if (count == NetworkManager.Singleton.ConnectedClients.Count)
             {
-                StartGameClientRpc(NetworkManager.Singleton.ServerTime.TimeAsFloat + 3f, NetworkManager.Singleton.ConnectedClientsIds.ToArray());
+                StartGameClientRpc(NetworkManager.Singleton.ServerTime.TimeAsFloat + 3f, NetworkManager.Singleton.ConnectedClientsIds.ToArray(), DateTime.UnixEpoch.Millisecond);
             }
         }
     }
@@ -114,13 +115,13 @@ public class NetworkController : NetworkBehaviour
     }
     
     [ClientRpc]
-    public void StartGameClientRpc(float time, ulong[] ConnectedClientsIds, ClientRpcParams clientRpcParams = default)
+    public void StartGameClientRpc(float time, ulong[] ConnectedClientsIds, int seed, ClientRpcParams clientRpcParams = default)
     {
         board = FindObjectOfType<Board>();
         score = FindObjectOfType<Score>();
         otherPlayers = FindObjectOfType<OtherPlayers>();
         
-        board.StartGameInit(time);
+        board.StartGameInit(time, seed);
         otherPlayers.StartGameInit(ConnectedClientsIds);
     }
 

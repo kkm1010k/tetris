@@ -50,8 +50,9 @@ public class Board : MonoBehaviour
         }
     }
 
-    public void StartGameInit(float time)
+    public void StartGameInit(float time, int seed)
     {
+        Random.InitState(seed);
         StartCoroutine(ShowCoroutine());
         StartCoroutine(StartGame(time));
     }

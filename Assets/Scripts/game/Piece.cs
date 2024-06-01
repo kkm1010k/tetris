@@ -86,10 +86,7 @@ public class Piece : MonoBehaviour
     }
 
     private void Update()
-    {
-        Debug.Log(Time.deltaTime);
-        Debug.Log(1/Time.deltaTime);
-        
+    {   
         if (!board)
         {
             return;
